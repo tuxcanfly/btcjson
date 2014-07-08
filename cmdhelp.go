@@ -65,11 +65,11 @@ SCRP,
 SRVR,
 TXMP.
 Finally the keyword "show" will return a list of the available subsystems.
-The command returns a string which will be "Done." if the command was sucessful,
+The command returns a string which will be "Done." if the command was successful,
 or the list of subsystems if "show" was specified.`,
 
 	"decoderawtransaction": `decoderawtransaction "hexstring"
-Decodes the seralized, hex-encoded transaction in hexstring and returns a JSON
+Decodes the serialized, hex-encoded transaction in hexstring and returns a JSON
 object representing it:
 {
 	"hex":"hex",	# String of the hex encoded transaction provided.
@@ -81,7 +81,7 @@ object representing it:
 			"txid":"id",		# Txid that is spent.
 			"vout":n,		# Output number.
 			"scriptSig": {
-				"asm":"asm",	# Disasembled script as a string.
+				"asm":"asm",	# Disassembled script as a string.
 				"hex":"hex",	# Hex string of script.
 			},
 			"sequence":n,		# Sequence number of script.
@@ -99,7 +99,7 @@ object representing it:
 			},
 		}
 	]
-	"blockhash":"hash",	# The block hash. as a string.
+	"blockhash":"hash",	# The block hash as a string.
 	"confirmations":n	# Number of confirmations in blockchain.
 	"time":t,		# Transaction time in seconds since the epoch.
 	"blocktime":t,		# Block time in seconds since the epoch.
@@ -236,7 +236,7 @@ The result object is of the following format:
 			...,	# this one is. A 1 based index into the
 			...,	# transactions list.
 		]
-		"fee":n		# Numeric transaction fee in satoshi. This is calculated by the diffrence between the sum of inputs and outputs. For coinbase transaction this is a negative number of total collected block fees. If not present fee is unknown; clients must not assume that there is no fee in this case.
+		"fee":n		# Numeric transaction fee in satoshi. This is calculated by the difference between the sum of inputs and outputs. For coinbase transaction this is a negative number of total collected block fees. If not present fee is unknown; clients must not assume that there is no fee in this case.
 		"sigops":n	# Number of total signature operations calculated for purposes of block limits. If not present the count is unknown but clients must not assume it is zero.
 		"required":true|false	# If provided and true this transaction *must* be in the final block.
 	],
@@ -335,7 +335,7 @@ network node. The objects have the following format:
 		"lastrecv":t,		# Time in seconds since epoch since last received message.
 		"bytessent":n,		# Total number of bytes sent.
 		"bytesrecv":n,		# Total number of bytes received
-		"conntime":t,		# Connection time in seconds since epoc.
+		"conntime":t,		# Connection time in seconds since epoch.
 		"pingtime":n,		# Ping time
 		"pingwait":n,		# Ping wait.
 		"version":n,		# The numeric peer version.
@@ -347,7 +347,7 @@ network node. The objects have the following format:
 	}
 ]`,
 	"getrawchangeaddress": `getrawchangeaddress
-Returns a string containing a new Bitcoin addres for receiving change.
+Returns a string containing a new Bitcoin address for receiving change.
 This rpc call is for use with raw transactions only.`,
 
 	"getrawmempool": `getrawmempool ( verbose )
@@ -398,7 +398,7 @@ following information about txid is returned:
 				"asm":"asm"	# Disassembled string of script.
 				"hex":"hex"	# Hex serialized string.
 				"reqSigs":n,	# Number of required signatures.
-				"type":"pubkey",	# Type of scirpt. e.g.  pubkeyhash" or "pubkey".
+				"type":"pubkey",	# Type of script. e.g.  pubkeyhash" or "pubkey".
 				"addresses":[		# Array of address strings.
 					"address",	# Bitcoin address.
 					...
@@ -434,7 +434,7 @@ transaction "txid". The object follows the following format:
 	"timereceived":t,	# Time transaction was received in seconds since epoch.
 	"details":[
 		{
-			"account":"name",	# The acount name involvedi n the transaction. "" means the default.
+			"account":"name",	# The account name involvedi n the transaction. "" means the default.
 			"address":"address",	# The address involved in the transaction as a string.
 			"category":"send|receive",	# Category - either send or receive.
 			"amount":n,		# numeric amount in BTC.
@@ -444,7 +444,7 @@ transaction "txid". The object follows the following format:
 }`,
 
 	"gettxout": `gettxout "txid" n ( includemempool )
-Returns an object containing detauls about an unspent transaction output
+Returns an object containing details about an unspent transaction output
 the "n"th output of "txid":
 {
 	"bestblock":"hash",		# Block has containing transaction.
@@ -454,7 +454,7 @@ the "n"th output of "txid":
 		"asm":"asm",		# Disassembled string of script.
 		"hex":"hex",		# String script serialized and hex encoded.
 		"reqSigs"		# Numeric required signatures.
-		"type":"pubkeyhash"	# Type of transaction. e.g. pubkeyhas
+		"type":"pubkeyhash"	# Type of transaction. e.g. pubkeyhash
 		"addresses":[		# Array of strings containing addresses.
 			"address",
 			...
@@ -463,7 +463,7 @@ the "n"th output of "txid":
 }`,
 
 	"gettxoutsetinfo": `gettxoutsetinfo
-Returns an object containing startstics about the unspent transaction
+Returns an object containing statistics about the unspent transaction
 output set:
 {
 	"height":n,			# Numeric current block height.
@@ -623,7 +623,7 @@ objects take the following format:
 		"account":"acc",	# The associated account, "" for default.
 		"scriptPubkey":"key"	# The pubkeyscript as a string.
 		"amount":n,		# The value of the transaction in BTC.
-		"confirmations":n,	# The numer of confirmations.
+		"confirmations":n,	# The number of confirmations.
 	},
 	...
 ]`,
@@ -639,7 +639,7 @@ tranaction is created. Boolean is returned whether the command succeeded.`,
 Moves a specifies amount from "fromaccount" to "toaccount". Only funds
 with minconf confirmations are used. If comment is present this comment
 will be stored in the wallet with the transaction. Boolean is returned
-to denode success.`,
+to denote success.`,
 
 	"ping": `ping
 Queues a ping to be sent to each connected peer. Ping times are provided in
@@ -699,7 +699,7 @@ be in the blockchain, it takes the following format:
 ]
 If the third argument is provided these base58-encoded private keys in
 the list will be the only keys used to sign the transaction. sighashtype
-optionally denoes the signature hash type to be used. is must be one of the
+optionally denotes the signature hash type to be used. is must be one of the
 following:
 	"ALL",
 	"NONE",
@@ -709,7 +709,7 @@ following:
 	"SINGLE|ANYONECANPAY".
 The return value takes the following format:
 {
-	"hex":"value"	# Hex string of raw transactino with signatures applied.
+	"hex":"value"	# Hex string of raw transaction with signatures applied.
 	"complete":n,	# If the transaction has a complete set of signatures. 0 if false.
 }`,
 
@@ -732,7 +732,7 @@ Format:
 	"ismine":true|false,	# If the address belongs to the server.
 	"isscript:true|false,	# If the address is a script address.
 	"pubkey":"pk",		# The hex value of the public key associated with the address.
-	"iscompressed":true|false,	# If the address is compresssed.
+	"iscompressed":true|false,	# If the address is compressed.
 	"account":"account",	# The related account. "" is the default.
 }`,
 
