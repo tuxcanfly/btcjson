@@ -448,6 +448,8 @@ func ReadResultCmd(cmd string, message []byte) (Reply, error) {
 	if err != nil {
 		if strings.Contains(string(message), "401 Unauthorized.") {
 			err = fmt.Errorf("authentication error")
+		} else if strings.Contains(string(message), "429 Too Many Requests") {
+			err = fmt.Errorf("request throttled")
 		} else {
 			err = fmt.Errorf("error unmarshalling json reply: %v", err)
 		}
