@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
 )
 
 // ErrIncorrectArgTypes describes an error where the wrong argument types
@@ -667,7 +668,6 @@ func rpcCommand(user string, password string, server string, message []byte,
 	body, err := rpcRawCommand(user, password, server, message, https,
 		certificates, skipverify)
 	if err != nil {
-		err := fmt.Errorf("error getting json reply: %v", err)
 		return result, err
 	}
 	result, err = ReadResultCmd(method, body)
@@ -712,6 +712,10 @@ func rpcRawCommand(user string, password string, server string,
 		return result, err
 	}
 	result, err = GetRaw(resp.Body)
+	if resp.StatusCode != http.StatusOK {
+		err = fmt.Errorf("%s", result)
+		return result, err
+	}
 	if err != nil {
 		err := fmt.Errorf("error getting json reply: %v", err)
 		return result, err
