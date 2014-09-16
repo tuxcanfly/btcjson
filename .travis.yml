@@ -7,6 +7,6 @@ install:
 - go get -d -t -v ./...
 script:
 - export PATH=$PATH:$HOME/gopath/bin
-- fgt golint -min_confidence=0.9 *.go
+- fgt golint -min_confidence=0.9
 - go vet *.go
 - go test -v ./...
