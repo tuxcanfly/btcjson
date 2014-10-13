@@ -931,10 +931,11 @@ var jsoncmdtests = []struct {
 		name: "basic",
 		cmd:  "listreceivedbyaccount",
 		f: func() (Cmd, error) {
-			return NewListReceivedByAccountCmd(testID)
+			return NewListReceivedByAccountCmd(testID, "abtcaccount")
 		},
 		result: &ListReceivedByAccountCmd{
 			id:      testID,
+			Account: "abtcaccount",
 			MinConf: 1,
 		},
 	},
@@ -942,10 +943,11 @@ var jsoncmdtests = []struct {
 		name: "basic + 1 opt",
 		cmd:  "listreceivedbyaccount",
 		f: func() (Cmd, error) {
-			return NewListReceivedByAccountCmd(testID, 2)
+			return NewListReceivedByAccountCmd(testID, "abtcaccount", 2)
 		},
 		result: &ListReceivedByAccountCmd{
 			id:      testID,
+			Account: "abtcaccount",
 			MinConf: 2,
 		},
 	},
@@ -953,10 +955,11 @@ var jsoncmdtests = []struct {
 		name: "basic + 2 opt",
 		cmd:  "listreceivedbyaccount",
 		f: func() (Cmd, error) {
-			return NewListReceivedByAccountCmd(testID, 2, true)
+			return NewListReceivedByAccountCmd(testID, "abtcaccount", 2, true)
 		},
 		result: &ListReceivedByAccountCmd{
 			id:           testID,
+			Account:      "abtcaccount",
 			MinConf:      2,
 			IncludeEmpty: true,
 		},

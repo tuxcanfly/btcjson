@@ -4306,6 +4306,7 @@ func (cmd *ListLockUnspentCmd) UnmarshalJSON(b []byte) error {
 // unmarshaling of listreceivedbyaccount JSON RPC commands.
 type ListReceivedByAccountCmd struct {
 	id           interface{}
+	Account      string
 	MinConf      int
 	IncludeEmpty bool
 }
@@ -4315,7 +4316,7 @@ var _ Cmd = &ListReceivedByAccountCmd{}
 
 // NewListReceivedByAccountCmd creates a new ListReceivedByAccountCmd. Optionally a
 // pointer to a TemplateRequest may be provided.
-func NewListReceivedByAccountCmd(id interface{}, optArgs ...interface{}) (*ListReceivedByAccountCmd, error) {
+func NewListReceivedByAccountCmd(id interface{}, account string, optArgs ...interface{}) (*ListReceivedByAccountCmd, error) {
 	minconf := 1
 	includeempty := false
 
@@ -4339,6 +4340,7 @@ func NewListReceivedByAccountCmd(id interface{}, optArgs ...interface{}) (*ListR
 	}
 	return &ListReceivedByAccountCmd{
 		id:           id,
+		Account:      account,
 		MinConf:      minconf,
 		IncludeEmpty: includeempty,
 	}, nil
@@ -4356,7 +4358,8 @@ func (cmd *ListReceivedByAccountCmd) Method() string {
 
 // MarshalJSON returns the JSON encoding of cmd.  Part of the Cmd interface.
 func (cmd *ListReceivedByAccountCmd) MarshalJSON() ([]byte, error) {
-	params := make([]interface{}, 0, 2)
+	params := make([]interface{}, 1, 3)
+	params[0] = cmd.Account
 	if cmd.MinConf != 1 || cmd.IncludeEmpty != false {
 		params = append(params, cmd.MinConf)
 	}
@@ -4381,27 +4384,32 @@ func (cmd *ListReceivedByAccountCmd) UnmarshalJSON(b []byte) error {
 		return err
 	}
 
-	if len(r.Params) > 2 {
+	if len(r.Params) > 3 {
 		return ErrWrongNumberOfParams
 	}
 
+	var account string
+	if err := json.Unmarshal(r.Params[0], &account); err != nil {
+		return fmt.Errorf("first parameter 'account' must be a string: %v", err)
+	}
+
 	optArgs := make([]interface{}, 0, 2)
-	if len(r.Params) > 0 {
+	if len(r.Params) > 1 {
 		var minconf int
-		if err := json.Unmarshal(r.Params[0], &minconf); err != nil {
+		if err := json.Unmarshal(r.Params[1], &minconf); err != nil {
 			return fmt.Errorf("first optional parameter 'minconf' must be an integer: %v", err)
 		}
 		optArgs = append(optArgs, minconf)
 	}
-	if len(r.Params) > 1 {
+	if len(r.Params) > 2 {
 		var includeempty bool
-		if err := json.Unmarshal(r.Params[1], &includeempty); err != nil {
+		if err := json.Unmarshal(r.Params[2], &includeempty); err != nil {
 			return fmt.Errorf("second optional parameter 'includeempty' must be a bool: %v", err)
 		}
 		optArgs = append(optArgs, includeempty)
 	}
 
-	newCmd, err := NewListReceivedByAccountCmd(r.Id, optArgs...)
+	newCmd, err := NewListReceivedByAccountCmd(r.Id, account, optArgs...)
 	if err != nil {
 		return err
 	}
