@@ -115,6 +115,9 @@ func ParseMarshaledCmd(b []byte) (Cmd, error) {
 	case "createmultisig":
 		cmd = new(CreateMultisigCmd)
 
+	case "createnewaccount":
+		cmd = new(CreateNewAccountCmd)
+
 	case "createrawtransaction":
 		cmd = new(CreateRawTransactionCmd)
 
@@ -279,6 +282,9 @@ func ParseMarshaledCmd(b []byte) (Cmd, error) {
 
 	case "ping":
 		cmd = new(PingCmd)
+
+	case "renameaccount":
+		cmd = new(RenameAccountCmd)
 
 	case "sendfrom":
 		cmd = new(SendFromCmd)
@@ -740,6 +746,76 @@ func (cmd *CreateMultisigCmd) UnmarshalJSON(b []byte) error {
 	}
 
 	newCmd, err := NewCreateMultisigCmd(r.Id, nRequired, keys)
+	if err != nil {
+		return err
+	}
+
+	*cmd = *newCmd
+	return nil
+}
+
+// CreateNewAccountCmd is a type handling custom marshaling and
+// unmarshaling of createnewaccount JSON RPC commands.
+type CreateNewAccountCmd struct {
+	id      interface{}
+	Account string
+}
+
+// Enforce that CreateNewAccountCmd satisifies the Cmd interface.
+var _ Cmd = &CreateNewAccountCmd{}
+
+// NewCreateNewAccountCmd creates a new CreateNewAccountCmd.
+func NewCreateNewAccountCmd(id interface{}, account string) (*CreateNewAccountCmd, error) {
+
+	return &CreateNewAccountCmd{
+		id:      id,
+		Account: account,
+	}, nil
+}
+
+// Id satisfies the Cmd interface by returning the id of the command.
+func (cmd *CreateNewAccountCmd) Id() interface{} {
+	return cmd.id
+}
+
+// Method satisfies the Cmd interface by returning the json method.
+func (cmd *CreateNewAccountCmd) Method() string {
+	return "createnewaccount"
+}
+
+// MarshalJSON returns the JSON encoding of cmd.  Part of the Cmd interface.
+func (cmd *CreateNewAccountCmd) MarshalJSON() ([]byte, error) {
+	params := []interface{}{
+		cmd.Account,
+	}
+
+	// Fill and marshal a RawCmd.
+	raw, err := NewRawCmd(cmd.id, cmd.Method(), params)
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(raw)
+}
+
+// UnmarshalJSON unmarshals the JSON encoding of cmd into cmd.  Part of
+// the Cmd interface.
+func (cmd *CreateNewAccountCmd) UnmarshalJSON(b []byte) error {
+	// Unmashal into a RawCmd
+	var r RawCmd
+	if err := json.Unmarshal(b, &r); err != nil {
+		return err
+	}
+
+	if len(r.Params) != 1 {
+		return ErrWrongNumberOfParams
+	}
+
+	var account string
+	if err := json.Unmarshal(r.Params[0], &account); err != nil {
+		return fmt.Errorf("first parameter 'account' must be a string: %v", err)
+	}
+
+	newCmd, err := NewCreateNewAccountCmd(r.Id, account)
 	if err != nil {
 		return err
 	}
@@ -5165,6 +5241,85 @@ func (cmd *PingCmd) UnmarshalJSON(b []byte) error {
 	}
 
 	newCmd, err := NewPingCmd(r.Id)
+	if err != nil {
+		return err
+	}
+
+	*cmd = *newCmd
+	return nil
+}
+
+// RenameAccountCmd is a type handling custom marshaling and
+// unmarshaling of renameaccount JSON RPC commands.
+type RenameAccountCmd struct {
+	id         interface{}
+	OldAccount string
+	NewAccount string
+}
+
+// Enforce that RenameAccountCmd satisifies the Cmd interface.
+var _ Cmd = &RenameAccountCmd{}
+
+// NewRenameAccountCmd creates a new RenameAccountCmd. Optionally a
+// pointer to a TemplateRequest may be provided.
+func NewRenameAccountCmd(id interface{}, oldaccount, newaccount string) (*RenameAccountCmd, error) {
+
+	return &RenameAccountCmd{
+		id:         id,
+		OldAccount: oldaccount,
+		NewAccount: newaccount,
+	}, nil
+}
+
+// Id satisfies the Cmd interface by returning the id of the command.
+func (cmd *RenameAccountCmd) Id() interface{} {
+	return cmd.id
+}
+
+// Method satisfies the Cmd interface by returning the json method.
+func (cmd *RenameAccountCmd) Method() string {
+	return "renameaccount"
+}
+
+// MarshalJSON returns the JSON encoding of cmd.  Part of the Cmd interface.
+func (cmd *RenameAccountCmd) MarshalJSON() ([]byte, error) {
+	params := []interface{}{
+		cmd.OldAccount,
+		cmd.NewAccount,
+	}
+
+	// Fill and marshal a RawCmd.
+	raw, err := NewRawCmd(cmd.id, cmd.Method(), params)
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(raw)
+}
+
+// UnmarshalJSON unmarshals the JSON encoding of cmd into cmd.  Part of
+// the Cmd interface.
+func (cmd *RenameAccountCmd) UnmarshalJSON(b []byte) error {
+	// Unmashal into a RawCmd
+	var r RawCmd
+	if err := json.Unmarshal(b, &r); err != nil {
+		return err
+	}
+
+	if len(r.Params) != 2 {
+		return ErrWrongNumberOfParams
+	}
+
+	var oldaccount string
+	if err := json.Unmarshal(r.Params[0], &oldaccount); err != nil {
+		return fmt.Errorf("first parameter 'oldaccount' must be a string: %v", err)
+	}
+
+	var newaccount string
+	if err := json.Unmarshal(r.Params[1], &newaccount); err != nil {
+		return fmt.Errorf("second parameter 'newaccount' must be a string: %v", err)
+	}
+
+	newCmd, err := NewRenameAccountCmd(r.Id, oldaccount, newaccount)
 	if err != nil {
 		return err
 	}
